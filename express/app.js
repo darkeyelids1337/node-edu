@@ -1,26 +1,27 @@
-const express = require('express')
-const app = express()
+const express = require("express");
+const morgan = require('morgan')
+let {people} = require('./data')
+const app = express();
+//static assets
+app.use(express.static('./methods-public'))
+app.use(express.urlencoded({extended:false}))
+app.use(express.json())
+app.use(morgan('tiny'))
 
-app.get('/', (req,res) => {
-    res.status(200).send('Home Page')
-})
+app.get("/api/people",(req, res) => {
+  res.status(200).json({success: true, data:people})
+});
 
-app.get('/about', (req,res) => {
-    res.status(200).send('About Page')
-})
-
-app.all('*', (req, res) => {
-    res.status(404).send('404 not found')
+app.post('/login', (req,res) => {
+  const {name} = req.body;
+  if(!name){
+    res.status(401).send('Provide credentionals')
+  }
+  else{
+    res.status(200).send(`Welcome ${name}`)
+  }
 })
 
 app.listen(5000, () => {
-    console.log('Server on port 5000')
-})
-
-// app.get
-// app.post
-// app.put
-// app.delete
-// app.all
-// app.use
-// app.listen
+  console.log("Listen on 5000...");
+});
